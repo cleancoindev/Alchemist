@@ -2,9 +2,7 @@ package net.apunch.alchemist;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 
 import net.citizensnpcs.api.CitizensAPI;
@@ -19,8 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
 public class Alchemist extends JavaPlugin {
-    private YamlStorage config;
-    private static final Set<PotionRecipe> recipes = new HashSet<PotionRecipe>();
+    private static YamlStorage config;
 
     @Override
     public void onDisable() {
@@ -32,41 +29,25 @@ public class Alchemist extends JavaPlugin {
         config = new YamlStorage(getDataFolder() + File.separator + "config.yml", "Alchemist NPCs Configuration");
         CitizensAPI.getCharacterManager().register(AlchemistCharacter.class);
 
-        try {
-            populateRecipes();
-        } catch (NPCLoadException ex) {
-            getLogger().log(Level.SEVERE, "Issue enabling plugin: " + ex.getMessage());
-        }
-
         getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " enabled.");
     }
 
-    public static PotionRecipe getRecipe(String name) {
-        for (PotionRecipe recipe : recipes) {
-            if (recipe.getName().equals(name))
-                return recipe;
-        }
-        return null;
-    }
+    public static PotionRecipe getRecipe(String name) throws NPCLoadException {
+        DataKey root = config.getKey("recipes." + name);
+        try {
+            ItemStack[] ingredients = new ItemStack[36];
+            for (DataKey id : root.getRelative("ingredients").getIntegerSubKeys())
+                ingredients[Integer.parseInt(id.name())] = getIngredient(id);
 
-    private void populateRecipes() throws NPCLoadException {
-        for (DataKey recipeKey : config.getKey("recipes").getSubKeys()) {
-            try {
-                ItemStack[] ingredients = new ItemStack[36];
-                for (DataKey id : recipeKey.getRelative("ingredients").getIntegerSubKeys())
-                    ingredients[Integer.parseInt(id.name())] = getIngredient(id);
-
-                recipes.add(new PotionRecipe(recipeKey.name(), PotionEffectType.getByName(recipeKey
-                        .getString("result.effect").toUpperCase().replace('-', '_')), recipeKey
-                        .getInt("result.duration") * 20, recipeKey.getInt("result.amplifier"), ingredients));
-            } catch (Exception ex) {
-                throw new NPCLoadException("Invalid configuration for the recipe '" + recipeKey.name() + "'."
-                        + ex.getMessage());
-            }
+            return new PotionRecipe(name, PotionEffectType.getByName(root.getString("result.effect").toUpperCase()
+                    .replace('-', '_')), root.getInt("result.duration") * 20, root.getInt("result.amplifier"),
+                    ingredients);
+        } catch (Exception ex) {
+            throw new NPCLoadException("Invalid configuration for the recipe '" + name + "'. " + ex.getMessage());
         }
     }
 
-    private ItemStack getIngredient(DataKey key) throws NPCLoadException {
+    private static ItemStack getIngredient(DataKey key) throws NPCLoadException {
         try {
             ItemStack item = new ItemStack(Material.getMaterial(key.getString("name").toUpperCase().replace('-', '_')),
                     key.getInt("amount"), (short) key.getLong("data"));

@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 public class PotionRecipe {
     private final String name;
     private PotionEffect result;
-    private Set<ItemStack> ingredients;
+    public Set<ItemStack> ingredients;
 
     public PotionRecipe(String name, PotionEffectType type, int duration, int amplifier, ItemStack... required) {
         this.name = name;
@@ -29,43 +29,38 @@ public class PotionRecipe {
     }
 
     public boolean hasIngredient(ItemStack ingredient) {
-        for (ItemStack stack : ingredients) {
-            if (stack != null
-                    && stack.getTypeId() == ingredient.getTypeId()
+        for (ItemStack stack : ingredients)
+            if (stack != null && stack.getTypeId() == ingredient.getTypeId()
                     && stack.getDurability() == ingredient.getDurability()
-                    && ((/*
-                          * stack.getEnchantments() != null &&
-                          * ingredient.getEnchantments() != null &&
-                          */stack.getEnchantments().equals(ingredient.getEnchantments())) || (stack.getEnchantments() == null && ingredient
-                            .getEnchantments() == null)))
+                    && (stack.getEnchantments().equals(ingredient.getEnchantments())))
                 return true;
-        }
         return false;
     }
 
     // Returns whether the player had enough of the item
     public boolean removeIngredientFromHand(Player player) {
-        ItemStack ingredient = player.getItemInHand();
+        ItemStack hand = player.getItemInHand();
         // Try to remove entire stack
-        if (ingredients.contains(ingredient)) {
-            System.out.println("full stack had");
-            ingredients.remove(ingredient);
+        if (ingredients.contains(hand)) {
+            ingredients.remove(hand);
             player.setItemInHand(null);
             return true;
         }
-        for (ItemStack stack : ingredients) {
-            if (stack != null && stack.getTypeId() == ingredient.getTypeId()
-                    && stack.getDurability() == ingredient.getDurability()
-                    && stack.getEnchantments().equals(ingredient.getEnchantments())) {
-                System.out.println("stack data == ingredient data: " + stack);
-                if (stack.getAmount() - ingredient.getAmount() > 0) {
-                    stack.setAmount(stack.getAmount() - ingredient.getAmount());
-                    return true;
+        for (ItemStack ingredient : ingredients) {
+            if (ingredient != null && ingredient.getTypeId() == hand.getTypeId()
+                    && ingredient.getDurability() == hand.getDurability()
+                    && ingredient.getEnchantments().equals(hand.getEnchantments())) {
+                ingredients.remove(ingredient);
+                if (hand.getAmount() - ingredient.getAmount() > 0)
+                    hand.setAmount(hand.getAmount() - ingredient.getAmount());
+                else {
+                    hand.setAmount(ingredient.getAmount() - hand.getAmount());
+                    ingredients.add(hand);
+                    player.setItemInHand(null);
+                    return false;
                 }
-                System.out.println("had enough and more!");
-                ingredients.remove(stack);
-                ingredient.setAmount(ingredient.getAmount() - stack.getAmount());
-                player.setItemInHand(ingredient);
+                hand.setAmount(hand.getAmount() - ingredient.getAmount() > 0 ? hand.getAmount() : 0);
+                player.setItemInHand(hand);
                 return true;
             }
         }

@@ -27,7 +27,6 @@ public class BrewingSession {
     // Return whether the session should end
     public boolean handleClick() {
         if (recipe.hasIngredient(player.getItemInHand())) {
-            // TODO add fake item entities around NPC for each ingredient added?
             if (!recipe.removeIngredientFromHand(player)) {
                 npc.chat(ChatColor.YELLOW + "I will need more of that item!");
                 return false;

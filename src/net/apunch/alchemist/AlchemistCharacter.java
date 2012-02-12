@@ -30,11 +30,13 @@ public class AlchemistCharacter extends Character {
             }
             if (session.handleClick())
                 session = null;
-        } else {
-            // TODO cooldowns
-            session = new BrewingSession(player, npc, Alchemist.getRecipe(recipeName));
-            session.initialize();
-        }
+        } else
+            try {
+                session = new BrewingSession(player, npc, Alchemist.getRecipe(recipeName));
+                session.initialize();
+            } catch (NPCLoadException ex) {
+                System.out.println("[SEVERE] Invalid recipe. " + ex.getMessage());
+            }
     }
 
     @Override
