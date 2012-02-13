@@ -2,3 +2,6 @@ name: Alchemist
 author: aPunch
 version: 1.0
 main: net.apunch.alchemist.Alchemist
+commands:
+  alchemist:
+    description: Alchemist commands
