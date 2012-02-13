@@ -33,9 +33,8 @@ public class BrewingSession {
             }
             if (recipe.isComplete()) {
                 applyResult();
-                npc.chat(ChatColor.GREEN + "I have combined the ingredients to concoct a potion of " + ChatColor.GOLD
-                        + Potion.fromItemStack(recipe.getResult()).getType().name().toLowerCase().replace('_', ' ')
-                        + ChatColor.GREEN + ".");
+                npc.chat(Setting.SUCCESS_MESSAGE.asString().replace("<potion>",
+                        Potion.fromItemStack(recipe.getResult()).getType().name().toLowerCase().replace('_', ' ')));
                 return true;
             }
 

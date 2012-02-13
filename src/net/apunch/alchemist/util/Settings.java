@@ -33,8 +33,10 @@ public class Settings {
     }
 
     public enum Setting {
+        COOLDOWN("cooldown-in-seconds", 60),
         INIT_MESSAGE("messages.initialization-message",
-                "<e>Hello there, <player>. Give me what I need and I will brew you a potion!");
+                "<e>Hello there, <player>. Give me what I need and I will brew you a potion!"),
+        SUCCESS_MESSAGE("messages.success-message", "<e>I have combined the ingredients to concoct a potion of <a><potion><e>.");
 
         private String path;
         private Object value;
