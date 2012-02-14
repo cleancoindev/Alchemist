@@ -12,15 +12,12 @@ import org.bukkit.potion.Potion;
 public class BrewingSession {
     private final Player player;
     private final NPC npc;
-    private final PotionRecipe recipe;
+    private PotionRecipe recipe;
 
     public BrewingSession(Player player, NPC npc, PotionRecipe recipe) {
         this.player = player;
         this.npc = npc;
         this.recipe = recipe;
-    }
-
-    public void initialize() {
         npc.chat(Setting.INIT_MESSAGE.asString());
     }
 

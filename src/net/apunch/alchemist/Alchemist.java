@@ -8,8 +8,11 @@ import net.apunch.alchemist.util.Settings;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,13 +23,60 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
 public class Alchemist extends JavaPlugin {
-    private static Settings settings;
+    private Settings settings;
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("You must be in-game to execute commands.");
             return true;
+        }
+        if (args.length < 1) {
+            sender.sendMessage(ChatColor.RED + "Incorrect usage. /alchemist help");
+            return true;
+        }
+
+        Player player = (Player) sender;
+        if (args[0].equalsIgnoreCase("help")) {
+            player.sendMessage(ChatColor.GOLD + "----- Alchemist Help -----");
+            player.sendMessage(ChatColor.GREEN + "/alchemist recipe" + ChatColor.GRAY + " -- Shows current recipe");
+            player.sendMessage(ChatColor.GREEN + "/alchemist recipe [name]" + ChatColor.GRAY
+                    + " -- Changes current recipe");
+            player.sendMessage(ChatColor.GREEN + "/alchemist recipes" + ChatColor.GRAY + " -- Lists available recipes");
+            return true;
+        }
+        NPC npc = CitizensAPI.getNPCManager().getSelectedNPC(player);
+        if (npc == null) {
+            player.sendMessage(ChatColor.RED + "You must have an alchemist selected.");
+            return true;
+        }
+        if (!npc.getTrait(Owner.class).getOwner().equals(player.getName())) {
+            player.sendMessage(ChatColor.RED + "You must be the owner of the alchemist to execute commands.");
+            return true;
+        }
+        if (npc.getCharacter() == null || !npc.getCharacter().getName().equals("alchemist")) {
+            player.sendMessage(ChatColor.RED + "That command must be performed on an alchemist!");
+            return true;
+        }
+        AlchemistCharacter alchemist = ((AlchemistCharacter) npc.getCharacter());
+        if (args[0].equalsIgnoreCase("recipe")) {
+            if (args.length == 1) {
+                player.sendMessage(ChatColor.GREEN + npc.getName() + "'s" + " Recipe: " + ChatColor.GOLD
+                        + alchemist.getRecipe());
+                return true;
+            }
+            if (!settings.getConfig().getKey("recipes").keyExists(args[1])) {
+                player.sendMessage(ChatColor.RED + "The recipe '" + args[1] + "' does not exist.");
+                return true;
+            }
+            alchemist.setRecipe(args[1]);
+            player.sendMessage(ChatColor.GOLD + npc.getName() + "'s " + ChatColor.GREEN + "recipe is now "
+                    + ChatColor.GOLD + args[1] + ChatColor.GREEN + ".");
+        } else if (args[0].equalsIgnoreCase("recipes")) {
+            player.sendMessage(ChatColor.GOLD + "----- Available Recipes -----");
+            for (DataKey key : settings.getConfig().getKey("recipes").getSubKeys())
+                player.sendMessage(ChatColor.GRAY + "  - " + ChatColor.GREEN + key.name());
         }
         return true;
     }
@@ -48,7 +98,7 @@ public class Alchemist extends JavaPlugin {
         getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " enabled.");
     }
 
-    public static PotionRecipe getRecipe(String name) throws NPCLoadException {
+    public PotionRecipe getRecipe(String name) throws NPCLoadException {
         DataKey root = settings.getConfig().getKey("recipes." + name);
         try {
             ItemStack[] ingredients = new ItemStack[36];
@@ -56,14 +106,14 @@ public class Alchemist extends JavaPlugin {
                 ingredients[Integer.parseInt(id.name())] = getIngredient(id);
 
             return new PotionRecipe(name, PotionEffectType.getByName(root.getString("result.effect").toUpperCase()
-                    .replace('-', '_')), root.getInt("result.duration") * 20, root.getInt("result.amplifier"),
-                    root.getBoolean("result.splash"), ingredients);
+                    .replace('-', '_')), root.getInt("result.duration") * 20, root.getInt("result.amplifier"), root
+                    .getBoolean("result.splash"), ingredients);
         } catch (Exception ex) {
             throw new NPCLoadException("Invalid configuration for the recipe '" + name + "'. " + ex.getMessage());
         }
     }
 
-    private static ItemStack getIngredient(DataKey key) throws NPCLoadException {
+    private ItemStack getIngredient(DataKey key) throws NPCLoadException {
         try {
             ItemStack item = new ItemStack(Material.getMaterial(key.getString("name").toUpperCase().replace('-', '_')),
                     key.getInt("amount"), (short) key.getLong("data"));
@@ -72,10 +122,8 @@ public class Alchemist extends JavaPlugin {
                 for (DataKey subKey : key.getRelative("enchantments").getSubKeys()) {
                     Enchantment enchantment = Enchantment.getByName(subKey.name().toUpperCase().replace('-', '_'));
                     if (enchantment != null && enchantment.canEnchantItem(item))
-                        enchantments.put(
-                                enchantment,
-                                subKey.getInt("") <= enchantment.getMaxLevel() ? subKey.getInt("") : enchantment
-                                        .getMaxLevel());
+                        enchantments.put(enchantment, subKey.getInt("") <= enchantment.getMaxLevel() ? subKey
+                                .getInt("") : enchantment.getMaxLevel());
                 }
                 item.addEnchantments(enchantments);
             }

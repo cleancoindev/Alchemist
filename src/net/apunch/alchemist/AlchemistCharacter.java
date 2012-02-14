@@ -1,5 +1,8 @@
 package net.apunch.alchemist;
 
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -11,14 +14,19 @@ import net.citizensnpcs.api.util.DataKey;
 
 @SaveId("alchemist")
 public class AlchemistCharacter extends Character {
-    private String recipeName;
+    private Alchemist plugin;
+    private String recipe;
     private BrewingSession session;
+
+    public AlchemistCharacter() {
+        plugin = (Alchemist) Bukkit.getServer().getPluginManager().getPlugin("Alchemist");
+    }
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        recipeName = key.getString("recipe");
-        if (Alchemist.getRecipe(recipeName) == null)
-            throw new NPCLoadException("No recipe with the name '" + recipeName + "' exists.");
+        recipe = key.getString("recipe");
+        if (plugin.getRecipe(recipe) == null)
+            throw new NPCLoadException("No recipe with the name '" + recipe + "' exists.");
     }
 
     @Override
@@ -30,17 +38,26 @@ public class AlchemistCharacter extends Character {
             }
             if (session.handleClick())
                 session = null;
-        } else
+        } else {
             try {
-                session = new BrewingSession(player, npc, Alchemist.getRecipe(recipeName));
-                session.initialize();
+                session = new BrewingSession(player, npc, plugin.getRecipe(recipe));
             } catch (NPCLoadException ex) {
-                System.out.println("[SEVERE] Invalid recipe. " + ex.getMessage());
+                plugin.getLogger().log(Level.SEVERE, "Invalid recipe. " + ex.getMessage());
             }
+        }
     }
 
     @Override
     public void save(DataKey key) {
-        key.setString("recipe", recipeName);
+        key.setString("recipe", recipe);
+    }
+
+    public String getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(String recipe) {
+        this.recipe = recipe;
+        session = null;
     }
 }
