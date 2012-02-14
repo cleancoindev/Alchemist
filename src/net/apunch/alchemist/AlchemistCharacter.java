@@ -1,9 +1,10 @@
 package net.apunch.alchemist;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -16,7 +17,7 @@ import net.citizensnpcs.api.util.DataKey;
 public class AlchemistCharacter extends Character {
     private Alchemist plugin;
     private String recipe;
-    private BrewingSession session;
+    private final Map<String, BrewingSession> sessions = new HashMap<String, BrewingSession>();
 
     public AlchemistCharacter() {
         plugin = (Alchemist) Bukkit.getServer().getPluginManager().getPlugin("Alchemist");
@@ -31,16 +32,14 @@ public class AlchemistCharacter extends Character {
 
     @Override
     public void onRightClick(NPC npc, Player player) {
+        BrewingSession session = sessions.get(player.getName());
         if (session != null) {
-            if (!session.getPlayer().getName().equals(player.getName())) {
-                player.sendMessage(ChatColor.RED + npc.getName() + " is busy with another player. Come back later!");
-                return;
-            }
             if (session.handleClick())
-                session = null;
+                sessions.remove(player.getName());
         } else {
             try {
                 session = new BrewingSession(player, npc, plugin.getRecipe(recipe));
+                sessions.put(player.getName(), session);
             } catch (NPCLoadException ex) {
                 plugin.getLogger().log(Level.SEVERE, "Invalid recipe. " + ex.getMessage());
             }
@@ -58,6 +57,6 @@ public class AlchemistCharacter extends Character {
 
     public void setRecipe(String recipe) {
         this.recipe = recipe;
-        session = null;
+        sessions.clear();
     }
 }
