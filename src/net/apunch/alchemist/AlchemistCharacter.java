@@ -1,11 +1,15 @@
 package net.apunch.alchemist;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import net.apunch.alchemist.util.Settings.Setting;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
@@ -18,6 +22,7 @@ public class AlchemistCharacter extends Character {
     private Alchemist plugin;
     private String recipe;
     private final Map<String, BrewingSession> sessions = new HashMap<String, BrewingSession>();
+    private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();;
 
     public AlchemistCharacter() {
         plugin = (Alchemist) Bukkit.getServer().getPluginManager().getPlugin("Alchemist");
@@ -32,14 +37,28 @@ public class AlchemistCharacter extends Character {
 
     @Override
     public void onRightClick(NPC npc, Player player) {
+        if (!player.hasPermission("alchemist.interact"))
+            return;
+
+        if (cooldowns.get(player.getName()) != null) {
+            if (!Calendar.getInstance().after(cooldowns.get(player.getName()))) {
+                player.sendMessage(ChatColor.RED + "You must wait more time before you can use this alchemist again.");
+                return;
+            }
+            cooldowns.remove(player.getName());
+        }
+
         BrewingSession session = sessions.get(player.getName());
         if (session != null) {
-            if (session.handleClick())
+            if (session.handleClick()) {
                 sessions.remove(player.getName());
+                Calendar wait = Calendar.getInstance();
+                wait.add(Calendar.SECOND, Setting.COOLDOWN.asInt());
+                cooldowns.put(player.getName(), wait);
+            }
         } else {
             try {
-                session = new BrewingSession(player, npc, plugin.getRecipe(recipe));
-                sessions.put(player.getName(), session);
+                sessions.put(player.getName(), new BrewingSession(player, npc, plugin.getRecipe(recipe)));
             } catch (NPCLoadException ex) {
                 plugin.getLogger().log(Level.SEVERE, "Invalid recipe. " + ex.getMessage());
             }

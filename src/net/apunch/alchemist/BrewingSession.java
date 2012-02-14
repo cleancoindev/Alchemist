@@ -41,10 +41,6 @@ public class BrewingSession {
         return false;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
     private void applyResult() {
         player.playEffect(player.getLocation(), Effect.POTION_BREAK, 0);
         player.getWorld().dropItemNaturally(npc.getBukkitEntity().getLocation(), recipe.getResult());
