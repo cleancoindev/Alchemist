@@ -9,7 +9,7 @@ import net.apunch.alchemist.util.Settings;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.trait.trait.Owner;
+import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 
 import org.bukkit.ChatColor;
