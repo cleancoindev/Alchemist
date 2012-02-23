@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import net.apunch.alchemist.util.Settings.Setting;
@@ -20,9 +19,9 @@ import net.citizensnpcs.api.util.DataKey;
 @SaveId("alchemist")
 public class AlchemistCharacter extends Character {
     private Alchemist plugin;
-    private String recipe;
+    private String recipe = "default";
     private final Map<String, BrewingSession> sessions = new HashMap<String, BrewingSession>();
-    private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();;
+    private final Map<String, Calendar> cooldowns = new HashMap<String, Calendar>();
 
     public AlchemistCharacter() {
         plugin = (Alchemist) Bukkit.getServer().getPluginManager().getPlugin("Alchemist");
@@ -30,9 +29,8 @@ public class AlchemistCharacter extends Character {
 
     @Override
     public void load(DataKey key) throws NPCLoadException {
-        recipe = key.getString("recipe");
-        if (plugin.getRecipe(recipe) == null)
-            throw new NPCLoadException("No recipe with the name '" + recipe + "' exists.");
+        if (plugin.getRecipe(key.getString("recipe")) != null)
+            recipe = key.getString("recipe");
     }
 
     @Override
@@ -42,7 +40,7 @@ public class AlchemistCharacter extends Character {
 
         if (cooldowns.get(player.getName()) != null) {
             if (!Calendar.getInstance().after(cooldowns.get(player.getName()))) {
-                player.sendMessage(ChatColor.RED + "You must wait more time before you can use this alchemist again.");
+                npc.chat(player, Setting.COOLDOWN_UNEXPIRED_MESSAGE.asString());
                 return;
             }
             cooldowns.remove(player.getName());

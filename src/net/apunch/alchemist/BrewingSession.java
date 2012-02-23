@@ -4,7 +4,6 @@ import net.apunch.alchemist.util.Settings.Setting;
 
 import net.citizensnpcs.api.npc.NPC;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.Potion;
@@ -25,7 +24,7 @@ public class BrewingSession {
     public boolean handleClick() {
         if (recipe.hasIngredient(player.getItemInHand())) {
             if (!recipe.removeIngredientFromHand(player)) {
-                npc.chat(ChatColor.YELLOW + "I will need more of that item!");
+                npc.chat(player, "<e>I will need more of that item!");
                 return false;
             }
             if (recipe.isComplete()) {
@@ -34,10 +33,9 @@ public class BrewingSession {
                         Potion.fromItemStack(recipe.getResult()).getType().name().toLowerCase().replace('_', ' ')));
                 return true;
             }
-
-            npc.chat(ChatColor.YELLOW + "The recipe is not complete yet! Give me more!");
+            npc.chat(player, "<e>The recipe is not complete yet! Give me more!");
         } else
-            npc.chat(ChatColor.RED + "Why would I want that? Give me something else!");
+            npc.chat(player, "<c>Why would I want that? Give me something else!");
         return false;
     }
 

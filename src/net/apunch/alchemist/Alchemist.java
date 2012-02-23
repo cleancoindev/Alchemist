@@ -93,6 +93,8 @@ public class Alchemist extends JavaPlugin {
         settings = new Settings(this);
         settings.load();
 
+        writeDefaultRecipe();
+
         CitizensAPI.getCharacterManager().register(AlchemistCharacter.class);
 
         getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " enabled.");
@@ -130,6 +132,23 @@ public class Alchemist extends JavaPlugin {
             return item;
         } catch (Exception ex) {
             throw new NPCLoadException("Invalid item. " + ex.getMessage());
+        }
+    }
+
+    private void writeDefaultRecipe() {
+        DataKey root = settings.getConfig().getKey("");
+        if (!root.keyExists("recipes.default")) {
+            DataKey def = root.getRelative("recipes.default");
+            def.setString("result.effect", "fire-resistance");
+            def.setInt("result.duration", 60);
+            def.setInt("result.amplifier", 1);
+            def.setBoolean("result.splash", false);
+            def.setString("ingredients.0.name", "sugar");
+            def.setInt("ingredients.0.amount", 1);
+            def.setInt("ingredients.0.data", 0);
+            def.setString("ingredients.1.name", "glass-bottle");
+            def.setInt("ingredients.1.amount", 1);
+            def.setInt("ingredients.1.data", 0);
         }
     }
 }

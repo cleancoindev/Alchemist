@@ -3,6 +3,7 @@ package net.apunch.alchemist.util;
 import java.io.File;
 
 import net.apunch.alchemist.Alchemist;
+
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.YamlStorage;
 
@@ -33,6 +34,7 @@ public class Settings {
     }
 
     public enum Setting {
+        COOLDOWN_UNEXPIRED_MESSAGE("messages.cooldown-not-expired", "You've already had your turn. Come back later!"),
         COOLDOWN("cooldown-in-seconds", 60),
         INIT_MESSAGE("messages.initialization-message",
                 "<e>Hello there, <player>. Give me what I need and I will brew you a potion!"),
