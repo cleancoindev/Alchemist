@@ -117,8 +117,11 @@ public class Alchemist extends JavaPlugin {
 
     private ItemStack getIngredient(DataKey key) throws NPCLoadException {
         try {
+            short data = 0;
+            if (key.keyExists("data"))
+                data = (short) key.getInt("data");
             ItemStack item = new ItemStack(Material.getMaterial(key.getString("name").toUpperCase().replace('-', '_')),
-                    key.getInt("amount"), (short) key.getLong("data"));
+                    key.getInt("amount"), data);
             if (key.keyExists("enchantments")) {
                 Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>();
                 for (DataKey subKey : key.getRelative("enchantments").getSubKeys()) {
@@ -145,10 +148,11 @@ public class Alchemist extends JavaPlugin {
             def.setBoolean("result.splash", false);
             def.setString("ingredients.0.name", "sugar");
             def.setInt("ingredients.0.amount", 1);
-            def.setInt("ingredients.0.data", 0);
             def.setString("ingredients.1.name", "glass-bottle");
             def.setInt("ingredients.1.amount", 1);
-            def.setInt("ingredients.1.data", 0);
+            def.setString("ingredients.2.name", "wool");
+            def.setInt("ingredients.2.amount", 1);
+            def.setInt("ingredients.2.data", 6);
         }
     }
 }
