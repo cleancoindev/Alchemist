@@ -2,7 +2,7 @@ package net.apunch.alchemist.util;
 
 import java.io.File;
 
-import net.apunch.alchemist.Alchemist;
+import net.apunch.alchemist.AlchemistPlugin;
 
 import net.citizensnpcs.api.util.DataKey;
 import net.citizensnpcs.api.util.YamlStorage;
@@ -10,7 +10,7 @@ import net.citizensnpcs.api.util.YamlStorage;
 public class Settings {
     private final YamlStorage config;
 
-    public Settings(Alchemist plugin) {
+    public Settings(AlchemistPlugin plugin) {
         config = new YamlStorage(plugin.getDataFolder() + File.separator + "config.yml", "Alchemist Configuration");
     }
 
