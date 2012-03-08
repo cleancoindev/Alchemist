@@ -12,11 +12,9 @@ import net.apunch.alchemist.util.Settings.Setting;
 
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.trait.Character;
-import net.citizensnpcs.api.trait.SaveId;
+import net.citizensnpcs.api.npc.character.Character;
 import net.citizensnpcs.api.util.DataKey;
 
-@SaveId("alchemist")
 public class Alchemist extends Character {
     private AlchemistPlugin plugin;
     private String recipe = "default";

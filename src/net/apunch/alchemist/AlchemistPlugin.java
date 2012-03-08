@@ -9,6 +9,7 @@ import net.apunch.alchemist.util.Settings;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
 import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.character.CharacterFactory;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.util.DataKey;
 
@@ -26,7 +27,6 @@ public class AlchemistPlugin extends JavaPlugin {
     private Settings settings;
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("You must be in-game to execute commands.");
@@ -46,7 +46,9 @@ public class AlchemistPlugin extends JavaPlugin {
             player.sendMessage(ChatColor.GREEN + "/alchemist recipes" + ChatColor.GRAY + " -- Lists available recipes");
             return true;
         }
-        NPC npc = CitizensAPI.getNPCManager().getSelectedNPC(player);
+        NPC npc = null;
+        if (player.getMetadata("selected").size() > 0)
+            npc = CitizensAPI.getNPCManager().getNPC(player.getMetadata("selected").get(0).asInt());
         if (npc == null) {
             player.sendMessage(ChatColor.RED + "You must have an alchemist selected.");
             return true;
@@ -95,7 +97,8 @@ public class AlchemistPlugin extends JavaPlugin {
 
         writeDefaultRecipe();
 
-        CitizensAPI.getCharacterManager().register(Alchemist.class);
+        CitizensAPI.getCharacterManager()
+                .registerCharacter(new CharacterFactory(Alchemist.class).withName("alchemist"));
 
         getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " enabled.");
     }
