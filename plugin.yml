@@ -1,8 +1,0 @@
-name: Alchemist
-author: aPunch
-version: 1.0
-main: net.apunch.alchemist.AlchemistPlugin
-depend: [Citizens]
-commands:
-  alchemist:
-    description: Alchemist commands
