@@ -1,3 +1,5 @@
+<!-- Alchemist build file -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -8,6 +10,7 @@
 	<name>Alchemist</name>
 	<description>Alchemist Character for the CitizensAPI</description>
 
+	<!-- Properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<bukkit.version>1.2.3-R0.3-SNAPSHOT</bukkit.version>
@@ -15,29 +18,30 @@
 		<build.number>Unknown</build.number>
 	</properties>
 
+	<!-- Repositories -->
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
 			<url>http://repo.bukkit.org/content/groups/public/</url>
 		</repository>
-
 		<repository>
 			<id>citizens-repo</id>
 			<url>http://repo.citizensnpcs.net/</url>
 		</repository>
 	</repositories>
 
+	<!-- Dependencies -->
 	<dependencies>
-		<dependency>
-			<groupId>net.citizensnpcs</groupId>
-			<artifactId>citizensapi</artifactId>
-			<version>${citizensapi.version}</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>${bukkit.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.citizensnpcs</groupId>
+			<artifactId>citizensapi</artifactId>
+			<version>${citizensapi.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

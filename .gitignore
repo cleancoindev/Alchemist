@@ -1,7 +1,4 @@
 /bin
-/build
 /target
 .classpath
 .project
-Alchemist.jar
-build.xml
