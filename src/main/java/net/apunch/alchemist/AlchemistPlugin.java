@@ -48,7 +48,7 @@ public class AlchemistPlugin extends JavaPlugin {
         }
         NPC npc = null;
         if (player.getMetadata("selected").size() > 0)
-            npc = CitizensAPI.getNPCManager().getNPC(player.getMetadata("selected").get(0).asInt());
+            npc = CitizensAPI.getNPCRegistry().getNPC(player.getMetadata("selected").get(0).asInt());
         if (npc == null) {
             player.sendMessage(ChatColor.RED + "You must have an alchemist selected.");
             return true;
