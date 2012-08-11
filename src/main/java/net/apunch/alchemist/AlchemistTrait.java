@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
 import net.apunch.alchemist.util.Settings.Setting;
+import net.apunch.blacksmith.BlacksmithTrait;
 
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -35,7 +36,7 @@ public class AlchemistTrait extends Trait {
 
 	@EventHandler
 	public void onRightClick(NPCRightClickEvent event) {
-		if (!event.getNPC().hasTrait(AlchemistTrait.class)) return;
+		if(this.npc!=event.getNPC()) return;
 		
 		
 		Player player = event.getClicker();

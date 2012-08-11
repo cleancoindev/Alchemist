@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.apunch.alchemist.util.Settings;
+import net.apunch.blacksmith.BlacksmithTrait;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
@@ -88,6 +89,17 @@ public class AlchemistPlugin extends JavaPlugin {
 
 		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " disabled.");
 	}
+	
+	
+	public AlchemistTrait getAlchemist(NPC npc){
+
+		if (npc !=null && npc.hasTrait(AlchemistTrait.class)){
+			return npc.getTrait(AlchemistTrait.class);
+		}
+
+		return null;
+	}
+	
 
 	@Override
 	public void onEnable() {
