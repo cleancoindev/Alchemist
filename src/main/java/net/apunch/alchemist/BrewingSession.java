@@ -17,25 +17,24 @@ public class BrewingSession {
         this.player = player;
         this.npc = npc;
         this.recipe = recipe;
-        npc.chat(Setting.INIT_MESSAGE.asString());
+        player.sendMessage(Setting.INIT_MESSAGE.asString());
     }
 
     // Return whether the session should end
     public boolean handleClick() {
         if (recipe.hasIngredient(player.getItemInHand())) {
             if (!recipe.removeIngredientFromHand(player)) {
-                npc.chat(player, "<e>I will need more of that item!");
+                player.sendMessage( "<e>I will need more of that item!");
                 return false;
             }
             if (recipe.isComplete()) {
                 applyResult();
-                npc.chat(Setting.SUCCESS_MESSAGE.asString().replace("<potion>",
-                        Potion.fromItemStack(recipe.getResult()).getType().name().toLowerCase().replace('_', ' ')));
+                player.sendMessage((Setting.SUCCESS_MESSAGE.asString().replace("<potion>",         Potion.fromItemStack(recipe.getResult()).getType().name().toLowerCase().replace('_', ' '))));
                 return true;
             }
-            npc.chat(player, "<e>The recipe is not complete yet! Give me more!");
+            player.sendMessage( "<e>The recipe is not complete yet! Give me more!");
         } else
-            npc.chat(player, "<c>Why would I want that? Give me something else!");
+            player.sendMessage( "<c>Why would I want that? Give me something else!");
         return false;
     }
 
