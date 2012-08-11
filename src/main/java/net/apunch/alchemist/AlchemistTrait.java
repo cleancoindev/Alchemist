@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
 import net.apunch.alchemist.util.Settings.Setting;
-import net.apunch.blacksmith.BlacksmithTrait;
 
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.exception.NPCLoadException;

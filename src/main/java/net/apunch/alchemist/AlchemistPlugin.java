@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.apunch.alchemist.util.Settings;
-import net.apunch.blacksmith.BlacksmithTrait;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.exception.NPCLoadException;
