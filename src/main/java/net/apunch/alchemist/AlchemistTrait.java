@@ -35,6 +35,9 @@ public class AlchemistTrait extends Trait {
 
 	@EventHandler
 	public void onRightClick(NPCRightClickEvent event) {
+		if (!event.getNPC().hasTrait(AlchemistTrait.class)) return;
+		
+		
 		Player player = event.getClicker();
 		if (!player.hasPermission("alchemist.interact"))
 			return;
